@@ -6,7 +6,7 @@ import { query } from '@/lib/db';
 import { getOrCreateSession, updateSessionStats, autoGenerateSessionTitle } from './session-helper';
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
-const GROQ_MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-20b';
+const GROQ_MODEL = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
 
 // ── GET messages ──────────────────────────────────────────────────────────────
 export async function GET(req: NextRequest) {
