@@ -1,0 +1,221 @@
+/**
+ * ViewToolbar Styles
+ * 
+ * Responsive toolbar with layout toggle and settings button.
+ * Requirements: 1.1, 1.2, 1.5, 1.6, 4.1, 9.1, 9.2, 9.3, 12.1, 12.2, 12.7
+ */
+
+/* ============================================================================
+   Toolbar Container
+   ============================================================================ */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  gap: 16px;
+}
+
+/* ============================================================================
+   Layout Toggle Section
+   ============================================================================ */
+
+.layoutToggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.toggleButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(124, 58, 237, 0.05);
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 200ms ease;
+  min-height: 44px; /* Touch-friendly - Requirement 9.3 */
+  min-width: 44px;
+}
+
+.toggleButton:hover {
+  background: rgba(124, 58, 237, 0.1);
+  border-color: rgba(124, 58, 237, 0.3);
+}
+
+.toggleButton:active {
+  transform: scale(0.98);
+}
+
+.toggleButton:focus-visible {
+  outline: 2px solid #7c3aed;
+  outline-offset: 2px;
+}
+
+/* ============================================================================
+   Icons
+   ============================================================================ */
+
+.icon {
+  color: #64748b;
+  transition: color 200ms ease;
+  flex-shrink: 0;
+}
+
+.icon.active {
+  color: #7c3aed; /* Primary purple - Requirement 12.1 */
+}
+
+.toggleButton:hover .icon {
+  color: #7c3aed;
+}
+
+/* ============================================================================
+   Layout Label
+   ============================================================================ */
+
+.layoutLabel {
+  font-size: 0.875rem; /* Requirement 12.6 */
+  font-weight: 600;
+  color: #334155;
+}
+
+/* ============================================================================
+   Settings Button
+   ============================================================================ */
+
+.settingsButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #7c3aed; /* Primary purple - Requirement 12.1 */
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 200ms ease; /* Requirement 12.7 */
+  font-size: 0.875rem;
+  font-weight: 600;
+  min-height: 44px; /* Touch-friendly - Requirement 9.3 */
+}
+
+.settingsButton:hover {
+  background: #6d28d9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+.settingsButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(124, 58, 237, 0.2);
+}
+
+.settingsButton:focus-visible {
+  outline: 2px solid #7c3aed;
+  outline-offset: 2px;
+}
+
+.settingsButton .icon {
+  color: #ffffff;
+}
+
+.settingsLabel {
+  display: inline;
+}
+
+/* ============================================================================
+   Mobile Responsiveness - Requirement 9.1, 9.2, 9.5
+   ============================================================================ */
+
+/* Small mobile devices (320px - 480px) */
+@media (max-width: 480px) {
+  .toolbar {
+    padding: 10px 12px;
+    gap: 12px;
+  }
+
+  .layoutLabel {
+    display: none; /* Hide label on very small screens */
+  }
+
+  .settingsLabel {
+    display: none; /* Show only icon on mobile */
+  }
+
+  .settingsButton {
+    padding: 10px 12px;
+    min-width: 44px;
+  }
+
+  .toggleButton {
+    padding: 10px;
+  }
+}
+
+/* Medium mobile devices (481px - 767px) */
+@media (min-width: 481px) and (max-width: 767px) {
+  .layoutLabel {
+    font-size: 0.8125rem;
+  }
+
+  .settingsLabel {
+    display: none; /* Show only icon on medium mobile */
+  }
+
+  .settingsButton {
+    padding: 10px 14px;
+  }
+}
+
+/* Tablet and desktop (768px+) */
+@media (min-width: 768px) {
+  .toolbar {
+    padding: 14px 20px;
+  }
+
+  .layoutLabel {
+    font-size: 0.9375rem;
+  }
+
+  .settingsLabel {
+    display: inline;
+  }
+}
+
+/* ============================================================================
+   Accessibility - Requirement 13.1, 13.2, 13.10
+   ============================================================================ */
+
+/* Ensure visible focus indicators */
+.toggleButton:focus-visible,
+.settingsButton:focus-visible {
+  outline: 2px solid #7c3aed;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .toolbar {
+    border-bottom-width: 2px;
+  }
+
+  .toggleButton,
+  .settingsButton {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .icon,
+  .toggleButton,
+  .settingsButton {
+    transition: none;
+  }
+}

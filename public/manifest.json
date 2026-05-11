@@ -1,0 +1,11 @@
+{
+  "name": "InYourTask",
+  "short_name": "InYourTask",
+  "description": "Ultra-smart task management platform with AI assistant",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "icons": []
+}

@@ -1,0 +1,65 @@
+# dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env
+.env*.local
+.env.development
+.env.production
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Database
+*.sql.backup
+database/MASTER_MIGRATION.sql
+database/FINAL_MISSING_TABLES.sql
+database/CREATE_MISSING_3_TABLES.sql
+database/COMPLETE_MIGRATION_PART1.sql
+MASTER_MIGRATION_PART1.sql
+
+# Documentation backups
+00-documentation/sql-backup/
