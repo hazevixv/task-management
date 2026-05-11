@@ -45,12 +45,17 @@ export async function POST(request: NextRequest) {
       {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${GROQ_API_KEY}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          contents: [{
-            parts: [{ text: prompt }]
-          }]
+          model: GROQ_MODEL,
+          messages: [{
+            role: 'user',
+            content: prompt
+          }],
+          temperature: 0.7,
+          max_tokens: 1024
         })
       }
     );
