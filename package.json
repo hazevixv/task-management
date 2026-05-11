@@ -9,7 +9,8 @@
     "lint": "next lint",
     "db:migrate": "node scripts/migrate.js",
     "console:on": "node scripts/toggle-console.js enable",
-    "console:off": "node scripts/toggle-console.js disable"
+    "console:off": "node scripts/toggle-console.js disable",
+    "check:env": "node scripts/check-env-for-vercel.js"
   },
   "dependencies": {
     "@emoji-mart/data": "^1.2.1",
