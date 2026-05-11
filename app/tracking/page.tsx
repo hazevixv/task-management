@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
+import { Suspense, useMemo, useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { format, differenceInDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subDays, subMonths } from 'date-fns';
 import {
@@ -93,7 +93,7 @@ function analyzeItem(logs: any[], itemId: string, itemType: string) {
   };
 }
 
-export default function TrackingPage() {
+function TrackingPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, data, authChecked, toast, handleLogout, showToast } = useApp();
@@ -792,5 +792,14 @@ export default function TrackingPage() {
       <BottomNav activeTab="tracking" onTabChange={nav} />
       {toast && <Toast message={toast.message} type={toast.type} />}
     </>
+  );
+}
+
+
+export default function TrackingPage() {
+  return (
+    <Suspense fallback={<PageLoader />}>
+      <TrackingPageContent />
+    </Suspense>
   );
 }
