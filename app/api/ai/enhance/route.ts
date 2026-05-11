@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireUser } from '@/lib/api-auth';
 import { logger } from '@/lib/logger';
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const GROQ_MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-20b';
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,9 +12,9 @@ export async function POST(request: NextRequest) {
 
     const { action, field, value, context } = await request.json();
 
-    if (!GEMINI_API_KEY) {
+    if (!GROQ_API_KEY) {
       return NextResponse.json(
-        { success: false, error: 'GEMINI_API_KEY not configured' },
+        { success: false, error: 'GROQ_API_KEY not configured' },
         { status: 500 }
       );
     }
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     }
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+      `https://api.groq.com/openai/v1/chat/completions`,
       {
         method: 'POST',
         headers: {
@@ -56,11 +56,11 @@ export async function POST(request: NextRequest) {
     );
 
     if (!response.ok) {
-      throw new Error(`Gemini API request failed with status ${response.status}`);
+      throw new Error(`Groq API request failed with status ${response.status}`);
     }
 
     const data = await response.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const text = data.choices?.[0]?.message?.content || '';
 
     if (action === 'autofill') {
       // Parse JSON response for autofill

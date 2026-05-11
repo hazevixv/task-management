@@ -3,8 +3,8 @@ import { AIModel } from '@/models/AIModel';
 import { logger } from '@/lib/logger';
 import { requireUser } from '@/lib/api-auth';
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const GROQ_MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-20b';
 
 function normalizeMessage(value: unknown) {
   return typeof value === 'string' ? value.trim() : '';
@@ -119,8 +119,8 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (!GEMINI_API_KEY) {
-      const fallback = 'Integrasi AI belum dikonfigurasi. Tambahkan `GEMINI_API_KEY` agar assistant bisa menjawab analisis dan insight.';
+    if (!GROQ_API_KEY) {
+      const fallback = 'Integrasi AI belum dikonfigurasi. Tambahkan `GROQ_API_KEY` agar assistant bisa menjawab analisis dan insight.';
       await AIModel.saveMessage(conversation.id, userId, 'assistant', fallback);
 
       return NextResponse.json({
@@ -193,16 +193,18 @@ ${conversationContext}
 `;
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+      `https://api.groq.com/openai/v1/chat/completions`,
       {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${GROQ_API_KEY}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `${smartContext}
+          model: GROQ_MODEL,
+          messages: [{
+            role: 'system',
+            content: `${smartContext}
 
 # YOUR ROLE
 You are an AI Project Management Assistant for "InYourTask". You have access to the actual task, project, log, and statistics context above.
@@ -213,25 +215,24 @@ You are an AI Project Management Assistant for "InYourTask". You have access to 
 - Respond in Indonesian.
 - Be concise, practical, and actionable.
 - Use markdown formatting when it improves readability.
-- If the user asks to create a task or project, suggest the next step clearly.
-
-# USER QUESTION
-${normalizedMessage}
-
-# YOUR RESPONSE`
-            }]
-          }]
+- If the user asks to create a task or project, suggest the next step clearly.`
+          }, {
+            role: 'user',
+            content: normalizedMessage
+          }],
+          temperature: 0.7,
+          max_tokens: 2048
         })
       }
     );
 
     if (!response.ok) {
-      throw new Error(`Gemini API request failed with status ${response.status}`);
+      throw new Error(`Groq API request failed with status ${response.status}`);
     }
 
     const data = await response.json();
     const text =
-      data.candidates?.[0]?.content?.parts?.[0]?.text ||
+      data.choices?.[0]?.message?.content ||
       'Maaf, AI sedang sibuk. Silakan coba lagi beberapa saat lagi.';
 
     await AIModel.saveMessage(conversation.id, userId, 'assistant', text);

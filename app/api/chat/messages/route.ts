@@ -5,8 +5,8 @@ import { getGlobalInstructions } from '@/lib/ai-global-instructions';
 import { query } from '@/lib/db';
 import { getOrCreateSession, updateSessionStats, autoGenerateSessionTitle } from './session-helper';
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const GROQ_MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-20b';
 
 // ── GET messages ──────────────────────────────────────────────────────────────
 export async function GET(req: NextRequest) {
@@ -83,8 +83,8 @@ export async function POST(req: NextRequest) {
     if (conv && (conv.type === 'ai_agent' || conv.type === 'ai_personal') && conv.agent_id) {
       const agent = await ChatModel.getAgentById(conv.agent_id);
       if (agent) {
-        if (!GEMINI_API_KEY) {
-          aiReply = await ChatModel.sendMessage(convId, agent.agent_id, '⚠️ AI features disabled. Add GEMINI_API_KEY to .env', 'ai');
+        if (!GROQ_API_KEY) {
+          aiReply = await ChatModel.sendMessage(convId, agent.agent_id, '⚠️ AI features disabled. Add GROQ_API_KEY to .env', 'ai');
         } else {
           const history = await ChatModel.getMessages(convId, 20);
           const memory = await ChatModel.getAgentMemory(agent.agent_id, user.username);
@@ -156,21 +156,23 @@ Selalu konfirmasi ke user setelah eksekusi. Format action HARUS tepat.`;
 
           try {
             const response = await fetch(
-              `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+              `https://api.groq.com/openai/v1/chat/completions`,
               {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  contents: [{ parts: [{ text: geminiPrompt }] }],
-                  generationConfig: { temperature: 0.7, maxOutputTokens: 1500 }
-                })
+                headers: { 'Authorization': `Bearer ${GROQ_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: GROQ_MODEL,
+          messages: [{ role: 'user', content: geminiPrompt }],
+          temperature: 0.7,
+          max_tokens: 1500
+        })
               }
             );
 
-            if (!response.ok) throw new Error(`Gemini API error: ${response.status}`);
+            if (!response.ok) throw new Error(`Groq API error: ${response.status}`);
 
             const data = await response.json();
-            let replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Maaf, tidak bisa merespons saat ini.';
+            let replyText = data.choices?.[0]?.message?.content || 'Maaf, tidak bisa merespons saat ini.';
 
             // ── PARSE AND EXECUTE AI ACTIONS ──────────────────────────────
             const actionMatches = replyText.match(/\[ACTION:([A-Z_]+):(\{[^}]+\})\]/g);
